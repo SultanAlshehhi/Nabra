@@ -1,20 +1,28 @@
 import { useState } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { motion } from 'framer-motion';
 import { Mic, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Mascot from '@/components/Mascot';
 
 export default function Login() {
+  const [, setLocation] = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState<'patient' | 'therapist'>('patient');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login submitted:', { email, password });
+    console.log('Login submitted:', { email, password, role });
+    if (role === 'patient') {
+      setLocation('/dashboard/patient');
+    } else {
+      setLocation('/dashboard/therapist');
+    }
   };
 
   return (
@@ -77,6 +85,19 @@ export default function Login() {
                       data-testid="input-password"
                       required
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Login as</Label>
+                    <RadioGroup value={role} onValueChange={(value) => setRole(value as 'patient' | 'therapist')} className="flex gap-4">
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="patient" id="role-patient" />
+                        <Label htmlFor="role-patient" className="font-normal cursor-pointer">Patient</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="therapist" id="role-therapist" />
+                        <Label htmlFor="role-therapist" className="font-normal cursor-pointer">Therapist</Label>
+                      </div>
+                    </RadioGroup>
                   </div>
                   <Button type="submit" className="w-full" size="lg" data-testid="button-submit-login">
                     Login

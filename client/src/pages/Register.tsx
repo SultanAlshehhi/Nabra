@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { motion } from 'framer-motion';
 import { Mic, ArrowLeft, User, Stethoscope } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Mascot from '@/components/Mascot';
 
 export default function Register() {
+  const [, setLocation] = useLocation();
   const [step, setStep] = useState<'role' | 'details'>('role');
   const [role, setRole] = useState<'patient' | 'therapist'>('patient');
   const [formData, setFormData] = useState({
@@ -26,6 +27,11 @@ export default function Register() {
   const handleDetailsSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Registration submitted:', { role, ...formData });
+    if (role === 'patient') {
+      setLocation('/dashboard/patient');
+    } else {
+      setLocation('/dashboard/therapist');
+    }
   };
 
   if (step === 'role') {
