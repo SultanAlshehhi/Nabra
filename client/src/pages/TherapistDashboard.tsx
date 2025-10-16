@@ -117,7 +117,6 @@ export default function TherapistDashboard() {
               >
                 <PatientCard
                   {...patient}
-                  onViewProfile={() => console.log('View profile:', patient.name)}
                 />
               </motion.div>
             ))}

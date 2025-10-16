@@ -3,16 +3,17 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { Link } from 'wouter';
 
 interface SessionCardProps {
   sessionId: string;
   date: string;
   classification: string;
   confidence: number;
-  onViewDetails?: () => void;
+  viewerRole?: 'patient' | 'therapist';
 }
 
-export default function SessionCard({ sessionId, date, classification, confidence, onViewDetails }: SessionCardProps) {
+export default function SessionCard({ sessionId, date, classification, confidence, viewerRole = 'patient' }: SessionCardProps) {
   const getClassificationColor = (cls: string) => {
     const colors: Record<string, string> = {
       'Articulation Disorder': 'bg-chart-1/10 text-chart-1',
@@ -57,16 +58,17 @@ export default function SessionCard({ sessionId, date, classification, confidenc
               <span className="text-sm font-semibold text-foreground">{confidence}%</span>
             </div>
           </div>
-          <Button
-            size="sm"
-            variant="outline"
-            className="w-full"
-            onClick={onViewDetails}
-            data-testid={`button-view-details-${sessionId}`}
-          >
-            <TrendingUp className="w-4 h-4 mr-2" />
-            View Details
-          </Button>
+          <Link href={`/session-details/${viewerRole}`}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full"
+              data-testid={`button-view-details-${sessionId}`}
+            >
+              <TrendingUp className="w-4 h-4 mr-2" />
+              View Details
+            </Button>
+          </Link>
         </CardContent>
       </Card>
     </motion.div>

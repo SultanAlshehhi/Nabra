@@ -8,21 +8,21 @@ export default function SessionCardExample() {
         date="Oct 15, 2025"
         classification="Articulation Disorder"
         confidence={86}
-        onViewDetails={() => console.log('View details clicked')}
+        viewerRole="patient"
       />
       <SessionCard
         sessionId="S002"
         date="Oct 14, 2025"
         classification="Phonological Impairment"
         confidence={72}
-        onViewDetails={() => console.log('View details clicked')}
+        viewerRole="patient"
       />
       <SessionCard
         sessionId="S003"
         date="Oct 13, 2025"
         classification="Vowel Disorder"
         confidence={91}
-        onViewDetails={() => console.log('View details clicked')}
+        viewerRole="patient"
       />
     </div>
   );

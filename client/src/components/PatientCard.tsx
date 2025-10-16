@@ -2,6 +2,7 @@ import { User, Calendar, FileText } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Link } from 'wouter';
 
 interface PatientCardProps {
   name: string;
@@ -9,10 +10,9 @@ interface PatientCardProps {
   lastSession: string;
   totalSessions: number;
   latestClassification?: string;
-  onViewProfile?: () => void;
 }
 
-export default function PatientCard({ name, age, lastSession, totalSessions, latestClassification, onViewProfile }: PatientCardProps) {
+export default function PatientCard({ name, age, lastSession, totalSessions, latestClassification }: PatientCardProps) {
   const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
 
   return (
@@ -51,15 +51,16 @@ export default function PatientCard({ name, age, lastSession, totalSessions, lat
             <p className="text-sm font-medium text-foreground">{latestClassification}</p>
           </div>
         )}
-        <Button
-          size="sm"
-          className="w-full"
-          onClick={onViewProfile}
-          data-testid={`button-view-profile-${name.replace(/\s+/g, '-').toLowerCase()}`}
-        >
-          <User className="w-4 h-4 mr-2" />
-          View Profile
-        </Button>
+        <Link href="/patient-profile/therapist">
+          <Button
+            size="sm"
+            className="w-full"
+            data-testid={`button-view-profile-${name.replace(/\s+/g, '-').toLowerCase()}`}
+          >
+            <User className="w-4 h-4 mr-2" />
+            View Profile
+          </Button>
+        </Link>
       </CardContent>
     </Card>
   );

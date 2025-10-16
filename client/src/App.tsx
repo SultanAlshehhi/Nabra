@@ -10,6 +10,8 @@ import PatientDashboard from "@/pages/PatientDashboard";
 import TherapistDashboard from "@/pages/TherapistDashboard";
 import RecordingSession from "@/pages/RecordingSession";
 import Results from "@/pages/Results";
+import SessionDetails from "@/pages/SessionDetails";
+import PatientProfile from "@/pages/PatientProfile";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -22,6 +24,8 @@ function Router() {
       <Route path="/dashboard/therapist" component={TherapistDashboard} />
       <Route path="/session" component={RecordingSession} />
       <Route path="/results" component={Results} />
+      <Route path="/session-details/:role" component={SessionDetails} />
+      <Route path="/patient-profile/:role" component={PatientProfile} />
       <Route component={NotFound} />
     </Switch>
   );

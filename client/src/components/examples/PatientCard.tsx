@@ -9,7 +9,6 @@ export default function PatientCardExample() {
         lastSession="Oct 15, 2025"
         totalSessions={5}
         latestClassification="Articulation Disorder"
-        onViewProfile={() => console.log('View profile clicked')}
       />
       <PatientCard
         name="Sarah Smith"
@@ -17,14 +16,12 @@ export default function PatientCardExample() {
         lastSession="Oct 14, 2025"
         totalSessions={12}
         latestClassification="Phonological Impairment"
-        onViewProfile={() => console.log('View profile clicked')}
       />
       <PatientCard
         name="Mike Johnson"
         age={6}
         lastSession="Oct 13, 2025"
         totalSessions={3}
-        onViewProfile={() => console.log('View profile clicked')}
       />
     </div>
   );

@@ -100,7 +100,7 @@ export default function PatientDashboard() {
                   >
                     <SessionCard
                       {...session}
-                      onViewDetails={() => console.log('View details:', session.sessionId)}
+                      viewerRole="patient"
                     />
                   </motion.div>
                 ))}
