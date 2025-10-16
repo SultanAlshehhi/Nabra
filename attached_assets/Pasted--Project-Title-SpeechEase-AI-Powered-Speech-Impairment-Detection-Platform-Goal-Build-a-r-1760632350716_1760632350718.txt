@@ -1,0 +1,287 @@
+🎯 Project Title:
+
+“SpeechEase: AI-Powered Speech Impairment Detection Platform”
+
+🧩 Goal
+
+Build a responsive web application that allows therapy centers to:
+
+Record patients reading sentences aloud
+
+Analyze their speech using AI
+
+Classify results into one of six speech disorder classes
+
+Display motivational, gamified feedback
+
+Auto-generate a professional health report for the therapist
+
+🧱 Core System Architecture
+
+Frontend: React + TailwindCSS (Next.js optional)
+
+Backend: Node.js (Express) or Python Flask
+
+Database: Firebase Firestore or MongoDB
+
+Storage: Firebase Storage / AWS S3 (for voice files)
+
+Authentication: Firebase Auth / JWT-based login
+
+AI Integration:
+
+Speech-to-text: OpenAI Whisper API (or Google Cloud Speech)
+
+Feature extraction & classification: Custom ML model (TensorFlow / PyTorch)
+
+Text summarization: GPT API (for health summary generation)
+
+PDF Report: jsPDF / ReportLab
+
+Email Service: SendGrid / Nodemailer
+
+👤 User Roles
+1. Patient/User
+
+Create account and fill health info
+
+Complete speech reading sessions
+
+View classification and progress
+
+Receive motivational feedback
+
+2. Therapist/Doctor
+
+Access dashboard
+
+View patient progress, reports, and trends
+
+Download or receive reports by email
+
+🧾 Database Schema
+Users Collection
+{
+  "user_id": "UID123",
+  "name": "John Doe",
+  "age": 7,
+  "gender": "Male",
+  "email": "john@example.com",
+  "native_language": "English",
+  "medical_history": "Hearing issue",
+  "assigned_doctor": "dr_sarah@clinic.com",
+  "role": "user"
+}
+
+Sessions Collection
+{
+  "session_id": "S001",
+  "user_id": "UID123",
+  "sentences_used": [
+    "Kenny drank a tiny tin of coke",
+    "Sean the sheep was on the ship",
+    "Funny Sean was washing a dirty dish",
+    "Cheeky Charlie's watching a football match",
+    "My granny Maggie got a golden gown"
+  ],
+  "audio_files": [
+    "storage/audio1.mp3",
+    "storage/audio2.mp3",
+    ...
+  ],
+  "classification_result": "Articulation Disorder",
+  "confidence_score": 86.5,
+  "ai_notes": "User misarticulated /r/ and /s/ phonemes.",
+  "session_date": "2025-10-16",
+  "summary_sent_to": "dr_sarah@clinic.com"
+}
+
+🗣️ Speech Analysis Pipeline
+
+Record Audio
+
+Capture user voice with browser microphone API (MediaRecorder).
+
+Save each sentence as separate .wav or .mp3.
+
+Speech-to-Text (STT)
+
+Use OpenAI Whisper API or Google Cloud STT.
+
+Compare transcribed sentence with original.
+
+Feature Extraction (ML Model Input)
+
+Extract MFCCs, formants, pitch contour, and phoneme durations.
+
+Normalize and vectorize for model inference.
+
+Classification (6 Classes)
+Model predicts one of:
+
+Phonological Impairment
+
+Vowel Disorder
+
+Childhood Apraxia of Speech
+
+Inconsistent Phonological Impairment
+
+Articulation Disorder
+
+Cleft Palate
+(Optional seventh class: Normal Speech)
+
+Output → { label, confidence_score, key_features }
+
+Motivational Feedback Generation
+
+Use GPT API to create two short encouraging bullet points.
+
+Example prompt:
+
+“Generate two positive and empathetic feedback lines for a patient diagnosed with {{label}}, age {{age}}. Keep tone cheerful and supportive.”
+
+Report Generation
+
+Combine:
+
+User info
+
+Classification result
+
+Confidence score
+
+AI observations
+
+GPT-generated professional health summary
+
+Convert to PDF
+
+Email to therapist automatically.
+
+🎮 Frontend (React Components)
+Pages & Components
+
+/login – user authentication
+
+/register – patient/therapist registration
+
+/dashboard – displays sessions, reports, and progress graph
+
+/session – main recording interface with:
+
+Sentence text + descriptive image
+
+Record button
+
+Progress bar (5 stages)
+
+Animated mascot guiding user
+
+/results – animated screen showing:
+
+Classification result
+
+Confidence score (animated radial gauge)
+
+Two motivational bullet points
+
+“Next Session” and “Download Report” buttons
+
+/doctor – therapist dashboard with:
+
+Patient list
+
+Session summaries
+
+Filter/search
+
+Report viewer
+
+🎨 UI Design Notes
+
+Style inspiration: Duolingo + Calm App
+
+Colors: soft blues, greens, yellows
+
+Font: rounded sans-serif (e.g., Poppins or Nunito)
+
+Animations: Framer Motion (page transitions, confetti, progress bars)
+
+Include subtle joyful mascot (e.g., talking microphone bubble)
+
+🧠 AI & ML Integration Pseudocode (Python Backend Example)
+from flask import Flask, request, jsonify
+import whisper
+import torch
+from model import SpeechClassifier # your trained model
+
+app = Flask(__name__)
+
+whisper_model = whisper.load_model("base")
+speech_model = SpeechClassifier.load_from_checkpoint("checkpoint.pth")
+
+@app.route('/analyze', methods=['POST'])
+def analyze():
+    audio = request.files['audio']
+    text_ref = request.form['sentence']
+
+    # Step 1: STT
+    result = whisper_model.transcribe(audio)
+    spoken_text = result['text']
+
+    # Step 2: Feature extraction
+    features = extract_features(audio)
+
+    # Step 3: Classification
+    prediction = speech_model.predict(features)
+    label, confidence = prediction['label'], prediction['confidence']
+
+    # Step 4: Return analysis
+    return jsonify({
+        "spoken_text": spoken_text,
+        "label": label,
+        "confidence": confidence
+    })
+
+if __name__ == '__main__':
+    app.run()
+
+📨 Report Generation Example
+
+Generate a professional summary:
+
+Patient: John Doe, Age 7
+Detected Disorder: Articulation Disorder (Confidence: 86%)
+AI Observation: Mispronunciation of /r/ and /s/ phonemes detected.
+Recommendation: Follow up with articulation therapy focusing on tongue placement exercises.
+
+Doctor Summary:
+"John exhibits mild articulation inconsistencies, particularly in alveolar consonants. Recommend early-stage articulation therapy for optimal progress."
+
+Then generate PDF → email to therapist automatically.
+
+🚀 Bonus Features
+
+Progress graph showing improvement over sessions
+
+“Try Again” option for each sentence
+
+Therapist notes section
+
+Voice feedback (AI reads motivational message aloud)
+
+Export report as PDF or CSV
+
+🧠 Expected Output
+
+A full-stack web app where:
+
+Users log in and complete reading sessions.
+
+AI classifies speech into one of six disorders.
+
+Results and motivational feedback are shown with animations.
+
+A professional report is generated and sent to the therapist automatically.
