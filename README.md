@@ -1,6 +1,8 @@
 # Nabra - AI-Powered Speech Therapy Platform
 
-![Nabra Logo](attached_assets/Nabra.png)
+<p align="center">
+  <img src="attached_assets/Nabra.png" alt="Nabra Logo" width="120">
+</p>
 
 ## 🎯 Project Overview
 
