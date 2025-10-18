@@ -1,4 +1,4 @@
-# SpeechEase Design Guidelines
+# Nabra Design Guidelines
 
 ## Design Approach: Reference-Based (Duolingo + Calm App Fusion)
 

@@ -4,7 +4,7 @@ export default function PatientCardExample() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-8 max-w-6xl">
       <PatientCard
-        name="John Doe"
+        name="Abdulla A."
         age={7}
         lastSession="Oct 15, 2025"
         totalSessions={5}
@@ -18,7 +18,7 @@ export default function PatientCardExample() {
         latestClassification="Phonological Impairment"
       />
       <PatientCard
-        name="Mike Johnson"
+        name="Mike Abdullason"
         age={6}
         lastSession="Oct 13, 2025"
         totalSessions={3}

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import heroImage from '@assets/generated_images/Speech_therapy_hero_image_ecef702d.png';
 import Mascot from '@/components/Mascot';
+import nabraLogo from '@assets/attached_assets/Nabra.png';
 
 export default function Home() {
   const features = [
@@ -35,10 +36,8 @@ export default function Home() {
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-              <Mic className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold text-foreground">SpeechEase</span>
+            <img src={nabraLogo} alt="Nabra Logo" className="w-10 h-10" />
+            <span className="text-xl font-bold text-foreground">Nabra</span>
           </div>
           <nav className="flex items-center gap-4">
             <Link href="/login">
@@ -103,7 +102,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold text-foreground mb-4">Why Choose SpeechEase?</h2>
+            <h2 className="text-4xl font-bold text-foreground mb-4">Why Choose Nabra?</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               A comprehensive platform designed by speech therapy experts and powered by cutting-edge AI technology
             </p>
@@ -150,7 +149,7 @@ export default function Home() {
       <footer className="border-t border-border bg-card py-12 px-6">
         <div className="max-w-7xl mx-auto text-center">
           <p className="text-muted-foreground">
-            © 2025 SpeechEase. AI-powered speech therapy platform.
+            © 2025 Nabra. AI-powered speech therapy platform.
           </p>
         </div>
       </footer>

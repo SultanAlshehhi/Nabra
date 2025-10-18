@@ -13,9 +13,9 @@ export default function PatientProfile() {
 
   //todo: remove mock functionality
   const patientData = {
-    name: 'John Doe',
+    name: 'Abdulla A.',
     age: 7,
-    email: 'john.doe@example.com',
+    email: 'Abdulla.A@example.com',
     therapist: 'Dr. Sarah Thompson',
     totalSessions: 5,
     latestClassification: 'Articulation Disorder',

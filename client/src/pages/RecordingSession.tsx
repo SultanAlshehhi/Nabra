@@ -7,6 +7,7 @@ import SentenceCard from '@/components/SentenceCard';
 import RecordButton from '@/components/RecordButton';
 import ProgressStepper from '@/components/ProgressStepper';
 import Mascot from '@/components/Mascot';
+import PhoneticTranscript from '@/components/PhoneticTranscript';
 
 import sentence1 from '@assets/generated_images/Boy_drinking_cola_illustration_088a92ea.png';
 import sentence2 from '@assets/generated_images/Sheep_on_ship_illustration_394dabde.png';
@@ -157,8 +158,18 @@ export default function RecordingSession() {
               )}
             </div>
 
-            <div className="flex justify-center pt-8">
-              <Mascot size="small" message={mascotMessages[currentStep - 1]} />
+            {hasRecorded && (
+              <div className="w-full max-w-2xl mx-auto">
+                <PhoneticTranscript 
+                  sentence={currentSentence.text} 
+                  isVisible={true}
+                  className="mb-6"
+                />
+              </div>
+            )}
+
+            <div className="flex justify-center pt-4">
+              <Mascot size="medium" message={mascotMessages[currentStep - 1]} />
             </div>
           </div>
         </div>

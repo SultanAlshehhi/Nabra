@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Mascot from '@/components/Mascot';
+import nabraLogo from '@assets/attached_assets/Nabra.png';
 
 export default function Register() {
   const [, setLocation] = useLocation();
@@ -46,10 +47,8 @@ export default function Register() {
               </Button>
             </Link>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                <Mic className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="text-lg font-bold text-foreground">SpeechEase</span>
+              <img src={nabraLogo} alt="Nabra Logo" className="w-8 h-8" />
+              <span className="text-lg font-bold text-foreground">Nabra</span>
             </div>
           </div>
         </header>
@@ -68,7 +67,7 @@ export default function Register() {
               <Card>
                 <CardHeader className="space-y-1">
                   <CardTitle className="text-2xl font-bold">Choose your role</CardTitle>
-                  <CardDescription>Select how you'll be using SpeechEase</CardDescription>
+                  <CardDescription>Select how you'll be using Nabra</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <RadioGroup value={role} onValueChange={(value) => setRole(value as 'patient' | 'therapist')}>
@@ -147,10 +146,8 @@ export default function Register() {
             Back
           </Button>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-              <Mic className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <span className="text-lg font-bold text-foreground">SpeechEase</span>
+            <img src={nabraLogo} alt="Nabra Logo" className="w-8 h-8" />
+            <span className="text-lg font-bold text-foreground">Nabra</span>
           </div>
         </div>
       </header>
@@ -173,7 +170,7 @@ export default function Register() {
                     <Input
                       id="name"
                       type="text"
-                      placeholder="John Doe"
+                      placeholder="Abdulla A."
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       data-testid="input-name"

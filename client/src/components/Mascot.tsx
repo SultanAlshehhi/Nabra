@@ -27,7 +27,7 @@ export default function Mascot({ size = 'medium', message, className = '' }: Mas
           ease: 'easeInOut',
         }}
       >
-        <img src={mascotImage} alt="SpeechEase Mascot" className="w-full h-full object-contain" />
+        <img src={mascotImage} alt="Nabra Mascot" className="w-full h-full object-contain" />
       </motion.div>
       {message && (
         <motion.div
