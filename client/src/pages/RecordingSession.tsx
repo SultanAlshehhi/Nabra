@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Volume2 } from 'lucide-react';
@@ -28,36 +28,66 @@ export default function RecordingSession() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isRecording, setIsRecording] = useState(false);
   const [hasRecorded, setHasRecorded] = useState(false);
+  const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
   const currentSentence = sentences[currentStep - 1];
+
+  // Cleanup audio URL on component unmount
+  useEffect(() => {
+    return () => {
+      if (audioUrl) {
+        URL.revokeObjectURL(audioUrl);
+      }
+    };
+  }, [audioUrl]);
 
   const handleRecord = () => {
     if (!isRecording) {
       setIsRecording(true);
-      console.log('Started recording');
-      setTimeout(() => {
-        setIsRecording(false);
-        setHasRecorded(true);
-        console.log('Stopped recording');
-      }, 3000);
+      setHasRecorded(false);
+      setRecordedAudio(null);
+      setAudioUrl(null);
     } else {
       setIsRecording(false);
-      setHasRecorded(true);
-      console.log('Manually stopped recording');
     }
+  };
+
+  const handleRecordingStart = () => {
+    console.log('Started recording');
+  };
+
+  const handleRecordingStop = (audioBlob: Blob) => {
+    console.log('Stopped recording');
+    setRecordedAudio(audioBlob);
+    setHasRecorded(true);
+    
+    // Create URL for playback
+    const url = URL.createObjectURL(audioBlob);
+    setAudioUrl(url);
   };
 
   const handleNext = () => {
     if (currentStep < sentences.length) {
       setCurrentStep(currentStep + 1);
       setHasRecorded(false);
+      setRecordedAudio(null);
+      if (audioUrl) {
+        URL.revokeObjectURL(audioUrl);
+        setAudioUrl(null);
+      }
     } else {
       setLocation('/results');
     }
   };
 
   const handlePlayback = () => {
-    console.log('Playing back recording');
+    if (audioUrl) {
+      const audio = new Audio(audioUrl);
+      audio.play().catch(error => {
+        console.error('Error playing audio:', error);
+      });
+    }
   };
 
   const mascotMessages = [
@@ -116,6 +146,8 @@ export default function RecordingSession() {
                 isRecording={isRecording}
                 onToggle={handleRecord}
                 disabled={false}
+                onRecordingStart={handleRecordingStart}
+                onRecordingStop={handleRecordingStop}
               />
 
               <div className="text-center space-y-2">

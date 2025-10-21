@@ -1,13 +1,83 @@
 import { Mic, Square } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useRef, useEffect } from 'react';
 
 interface RecordButtonProps {
   isRecording: boolean;
   onToggle: () => void;
   disabled?: boolean;
+  onRecordingStart?: () => void;
+  onRecordingStop?: (audioBlob: Blob) => void;
 }
 
-export default function RecordButton({ isRecording, onToggle, disabled }: RecordButtonProps) {
+export default function RecordButton({ 
+  isRecording, 
+  onToggle, 
+  disabled, 
+  onRecordingStart, 
+  onRecordingStop 
+}: RecordButtonProps) {
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  useEffect(() => {
+    if (isRecording) {
+      startRecording();
+    } else {
+      stopRecording();
+    }
+  }, [isRecording]);
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          sampleRate: 44100
+        } 
+      });
+      
+      streamRef.current = stream;
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm;codecs=opus'
+      });
+      
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        onRecordingStop?.(audioBlob);
+        
+        // Clean up
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => track.stop());
+          streamRef.current = null;
+        }
+      };
+
+      mediaRecorder.start();
+      onRecordingStart?.();
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
+      alert('Unable to access microphone. Please check your permissions.');
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      mediaRecorderRef.current.stop();
+    }
+  };
+
   return (
     <motion.button
       whileTap={{ scale: 0.95 }}
