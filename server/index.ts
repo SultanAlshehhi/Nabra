@@ -57,7 +57,10 @@ app.use((req, res, next) => {
   }
 
   // Choose port and host (use IPv4 localhost for Windows)
-  const port = parseInt(process.env.PORT || "5000", 10);
+  
+  // const port = parseInt(process.env.PORT || "5000", 10); // for windows
+  const port = parseInt(process.env.PORT || "3000", 10);; // for macos
+
 
   server.listen(port, "127.0.0.1", () => {
     log(`✅ Server running at http://127.0.0.1:${port}`);
