@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import SessionCard from '@/components/SessionCard';
 import Mascot from '@/components/Mascot';
-import nabraLogo from '@assets/attached_assets/Nabra.png';
+import nabraLogo from '@assets/Nabra.png';
 
 export default function PatientDashboard() {
   //todo: remove mock functionality

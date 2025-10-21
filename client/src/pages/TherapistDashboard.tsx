@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PatientCard from '@/components/PatientCard';
-import nabraLogo from '@assets/attached_assets/Nabra.png';
+import nabraLogo from '@assets/Nabra.png';
 
 export default function TherapistDashboard() {
   //todo: remove mock functionality

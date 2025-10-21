@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Mascot from '@/components/Mascot';
-import nabraLogo from '@assets/attached_assets/Nabra.png';
+import nabraLogo from '@assets/Nabra.png';
 
 export default function Login() {
   const [, setLocation] = useLocation();

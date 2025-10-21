@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import heroImage from '@assets/generated_images/Speech_therapy_hero_image_ecef702d.png';
 import Mascot from '@/components/Mascot';
-import nabraLogo from '@assets/attached_assets/Nabra.png';
+import nabraLogo from '@assets/Nabra.png';
 
 export default function Home() {
   const features = [
