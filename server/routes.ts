@@ -188,8 +188,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Save analysis results to database
-      // TODO: Implement database storage for analysis results
-      // await storage.updateRecordingAnalysis(recordingId, analysisResult);
+      await storage.updateRecordingAnalysis(recordingId, analysisResult);
       
       // Log phoneme transcription for debugging
       if (analysisResult.phoneme_transcription) {
@@ -207,6 +206,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         error: 'Failed to process recording',
         details: error instanceof Error ? error.message : 'Unknown error'
       });
+    }
+  });
+
+  // Get phoneme transcription for a recording
+  app.get('/api/recordings/:recordingId/phonemes', async (req: Request, res: Response) => {
+    try {
+      const { recordingId } = req.params;
+      
+      // TODO: Fetch from database - for now using in-memory storage
+      const recording = (storage as any).recordings?.get(recordingId);
+      
+      if (!recording) {
+        return res.status(404).json({ error: 'Recording not found' });
+      }
+
+      res.json({
+        success: true,
+        recordingId,
+        phonemeTranscription: recording.phonemeTranscription,
+        phonemeSequence: recording.phonemeSequence,
+        processingStatus: recording.processingStatus
+      });
+    } catch (error) {
+      console.error('Error fetching phoneme transcription:', error);
+      res.status(500).json({ error: 'Failed to fetch phoneme transcription' });
     }
   });
 

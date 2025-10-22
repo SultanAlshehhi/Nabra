@@ -26,7 +26,10 @@ export const recordings = pgTable("recordings", {
   fileSize: integer("file_size"), // File size in bytes
   mimeType: text("mime_type").notNull().default('audio/webm'),
   processingStatus: text("processing_status").default('pending'), // pending, processing, completed, failed
-  analysisResults: json("analysis_results"), // Store phonetic analysis results
+  analysisResults: json("analysis_results"), // Store speech analysis results
+  phonemeTranscription: json("phoneme_transcription"), // Store phoneme transcription results
+  phonemeSequence: text("phoneme_sequence"), // Raw phoneme sequence from Allosaurus
+  phonemeAlignment: json("phoneme_alignment"), // Time-aligned phoneme data
   createdAt: timestamp("created_at").defaultNow(),
 });
 
