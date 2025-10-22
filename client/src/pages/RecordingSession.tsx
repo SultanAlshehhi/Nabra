@@ -8,6 +8,7 @@ import RecordButton from '@/components/RecordButton';
 import ProgressStepper from '@/components/ProgressStepper';
 import Mascot from '@/components/Mascot';
 import PhoneticTranscript from '@/components/PhoneticTranscript';
+import { audioStorage, type AudioRecording } from '@/lib/audioStorage';
 
 import sentence1 from '@assets/generated_images/Boy_drinking_cola_illustration_088a92ea.png';
 import sentence2 from '@assets/generated_images/Sheep_on_ship_illustration_394dabde.png';
@@ -30,6 +31,8 @@ export default function RecordingSession() {
   const [hasRecorded, setHasRecorded] = useState(false);
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [sessionId] = useState(() => crypto.randomUUID());
+  const [isUploading, setIsUploading] = useState(false);
 
   const currentSentence = sentences[currentStep - 1];
 
@@ -57,7 +60,7 @@ export default function RecordingSession() {
     console.log('Started recording');
   };
 
-  const handleRecordingStop = (audioBlob: Blob) => {
+  const handleRecordingStop = async (audioBlob: Blob) => {
     console.log('Stopped recording');
     setRecordedAudio(audioBlob);
     setHasRecorded(true);
@@ -65,6 +68,35 @@ export default function RecordingSession() {
     // Create URL for playback
     const url = URL.createObjectURL(audioBlob);
     setAudioUrl(url);
+
+    // Save recording to local storage and upload to server
+    try {
+      setIsUploading(true);
+      
+      const recording: AudioRecording = {
+        id: crypto.randomUUID(),
+        sessionId,
+        audioBlob,
+        duration: Math.round(audioBlob.size / 1000), // Rough estimate
+        fileSize: audioBlob.size,
+        mimeType: audioBlob.type,
+        sentence: currentSentence.text,
+        step: currentStep
+      };
+
+      // Save to local storage
+      await audioStorage.saveRecording(recording);
+
+      // Upload to server for processing
+      await audioStorage.uploadToServer(recording);
+      
+      console.log('Recording saved and uploaded successfully');
+    } catch (error) {
+      console.error('Failed to save recording:', error);
+      // Don't show error to user, just log it
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleNext = () => {
@@ -152,7 +184,14 @@ export default function RecordingSession() {
 
               <div className="text-center space-y-2">
                 <p className="text-lg font-medium text-foreground">
-                  {isRecording ? 'Recording... Speak clearly!' : hasRecorded ? 'Recording complete!' : 'Press to start recording'}
+                  {isRecording 
+                    ? 'Recording... Speak clearly!' 
+                    : hasRecorded 
+                      ? isUploading 
+                        ? 'Saving recording...' 
+                        : 'Recording complete!' 
+                      : 'Press to start recording'
+                  }
                 </p>
                 {hasRecorded && (
                   <Button
