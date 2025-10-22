@@ -9,6 +9,7 @@ import ProgressStepper from '@/components/ProgressStepper';
 import Mascot from '@/components/Mascot';
 import PhoneticTranscript from '@/components/PhoneticTranscript';
 import { audioStorage, type AudioRecording } from '@/lib/audioStorage';
+import SpeechAnalysisResults from '@/components/SpeechAnalysisResults';
 
 import sentence1 from '@assets/generated_images/Boy_drinking_cola_illustration_088a92ea.png';
 import sentence2 from '@assets/generated_images/Sheep_on_ship_illustration_394dabde.png';
@@ -33,6 +34,9 @@ export default function RecordingSession() {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [sessionId] = useState(() => crypto.randomUUID());
   const [isUploading, setIsUploading] = useState(false);
+  const [speechAnalysis, setSpeechAnalysis] = useState<any>(null);
+  const [isProcessingSpeech, setIsProcessingSpeech] = useState(false);
+  const [speechAnalysisError, setSpeechAnalysisError] = useState<string | null>(null);
 
   const currentSentence = sentences[currentStep - 1];
 
@@ -88,9 +92,26 @@ export default function RecordingSession() {
       await audioStorage.saveRecording(recording);
 
       // Upload to server for processing
-      await audioStorage.uploadToServer(recording);
+      const uploadResult = await audioStorage.uploadToServer(recording);
+      const recordingId = uploadResult.recordingId;
+      const audioFilePath = uploadResult.audioFilePath;
       
       console.log('Recording saved and uploaded successfully');
+      
+      // Start speech analysis
+      setIsProcessingSpeech(true);
+      setSpeechAnalysisError(null);
+      
+      try {
+        const analysisResult = await audioStorage.processRecording(recordingId, audioFilePath);
+        setSpeechAnalysis(analysisResult);
+        console.log('Speech analysis completed:', analysisResult);
+      } catch (error) {
+        console.error('Speech analysis failed:', error);
+        setSpeechAnalysisError(error instanceof Error ? error.message : 'Analysis failed');
+      } finally {
+        setIsProcessingSpeech(false);
+      }
     } catch (error) {
       console.error('Failed to save recording:', error);
       // Don't show error to user, just log it
@@ -104,6 +125,8 @@ export default function RecordingSession() {
       setCurrentStep(currentStep + 1);
       setHasRecorded(false);
       setRecordedAudio(null);
+      setSpeechAnalysis(null);
+      setSpeechAnalysisError(null);
       if (audioUrl) {
         URL.revokeObjectURL(audioUrl);
         setAudioUrl(null);
@@ -205,6 +228,14 @@ export default function RecordingSession() {
                   </Button>
                 )}
               </div>
+
+              {/* Speech Analysis Results */}
+              <SpeechAnalysisResults
+                analysis={speechAnalysis}
+                isProcessing={isProcessingSpeech}
+                error={speechAnalysisError || undefined}
+                className="mt-6"
+              />
 
               {hasRecorded && (
                 <motion.div

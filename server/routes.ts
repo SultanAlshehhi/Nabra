@@ -5,6 +5,12 @@ import multer, { type FileFilterCallback } from "multer";
 import path from "path";
 import fs from "fs";
 import { randomUUID } from "crypto";
+import { spawn } from "child_process";
+import { fileURLToPath } from "url";
+
+// Get __dirname equivalent for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configure multer for audio file uploads
 const upload = multer({
@@ -20,6 +26,63 @@ const upload = multer({
     }
   }
 });
+
+// Function to run speech analysis using Python service
+async function runSpeechAnalysis(audioFilePath: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    console.log(`Starting speech analysis for file: ${audioFilePath}`);
+    
+    // Check if file exists
+    if (!fs.existsSync(audioFilePath)) {
+      reject(new Error(`Audio file not found: ${audioFilePath}`));
+      return;
+    }
+
+    const pythonScriptPath = path.join(__dirname, '..', 'speech_analysis_service.py');
+    console.log(`Python script path: ${pythonScriptPath}`);
+    
+    const pythonProcess = spawn('python3', [pythonScriptPath, audioFilePath]);
+
+    let output = '';
+    let errorOutput = '';
+
+    pythonProcess.stdout.on('data', (data) => {
+      const dataStr = data.toString();
+      console.log(`Python stdout: ${dataStr}`);
+      output += dataStr;
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+      const dataStr = data.toString();
+      console.log(`Python stderr: ${dataStr}`);
+      errorOutput += dataStr;
+    });
+
+    pythonProcess.on('close', (code) => {
+      console.log(`Python process exited with code: ${code}`);
+      console.log(`Output: ${output}`);
+      console.log(`Error output: ${errorOutput}`);
+      
+      if (code === 0) {
+        try {
+          const result = JSON.parse(output);
+          resolve(result);
+        } catch (parseError) {
+          console.error(`Failed to parse JSON: ${parseError}`);
+          console.error(`Raw output: ${output}`);
+          reject(new Error(`Failed to parse analysis result: ${parseError}`));
+        }
+      } else {
+        reject(new Error(`Python process exited with code ${code}: ${errorOutput}`));
+      }
+    });
+
+    pythonProcess.on('error', (error) => {
+      console.error(`Python process error: ${error.message}`);
+      reject(new Error(`Failed to start Python process: ${error.message}`));
+    });
+  });
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // put application routes here
@@ -40,7 +103,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate unique filename
       const fileExtension = path.extname(req.file.originalname) || '.webm';
       const uniqueFilename = `${randomUUID()}${fileExtension}`;
-      const finalPath = path.join('uploads/audio', uniqueFilename);
+      const finalPath = path.resolve('uploads/audio', uniqueFilename);
+
+      // Ensure uploads directory exists
+      const uploadsDir = path.resolve('uploads/audio');
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
 
       // Move file to final location
       fs.renameSync(req.file.path, finalPath);
@@ -65,6 +134,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: true,
         recordingId,
         audioUrl: recordingData.audioUrl,
+        audioFilePath: finalPath, // Include the file path for processing
         message: 'Recording uploaded successfully'
       });
 
@@ -92,30 +162,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Process audio for phonetic analysis
+  // Process audio for speech analysis
   app.post('/api/recordings/:recordingId/process', async (req: Request, res: Response) => {
     try {
       const { recordingId } = req.params;
+      const { audioFilePath } = req.body;
       
-      // TODO: Implement audio processing logic
-      // This would integrate with speech recognition APIs
-      // For now, return mock analysis
-      const mockAnalysis = {
-        phonemes: [
-          { symbol: '/ˈkɛni/', word: 'Kenny', isCorrect: true },
-          { symbol: '/dræŋk/', word: 'drank', isCorrect: false },
-        ],
-        overallScore: 85,
-        recommendations: ['Focus on the "dr" sound in "drank"']
-      };
+      if (!audioFilePath) {
+        return res.status(400).json({ error: 'Audio file path is required' });
+      }
+
+      // Check if file exists
+      if (!fs.existsSync(audioFilePath)) {
+        return res.status(404).json({ error: 'Audio file not found' });
+      }
+
+      // Run speech analysis
+      const analysisResult = await runSpeechAnalysis(audioFilePath);
+      
+      if (analysisResult.error) {
+        return res.status(500).json({ 
+          error: 'Speech analysis failed', 
+          details: analysisResult.error 
+        });
+      }
+
+      // Save analysis results to database
+      // TODO: Implement database storage for analysis results
+      // await storage.updateRecordingAnalysis(recordingId, analysisResult);
+      
+      // Log phoneme transcription for debugging
+      if (analysisResult.phoneme_transcription) {
+        console.log(`Phoneme transcription for ${recordingId}:`, analysisResult.phoneme_transcription.phoneme_sequence);
+      }
 
       res.json({
         success: true,
-        analysis: mockAnalysis
+        analysis: analysisResult,
+        recordingId
       });
     } catch (error) {
       console.error('Error processing recording:', error);
-      res.status(500).json({ error: 'Failed to process recording' });
+      res.status(500).json({ 
+        error: 'Failed to process recording',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   });
 

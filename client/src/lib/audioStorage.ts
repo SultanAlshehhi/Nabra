@@ -110,7 +110,7 @@ class AudioStorageService {
     });
   }
 
-  async uploadToServer(recording: AudioRecording): Promise<string> {
+  async uploadToServer(recording: AudioRecording): Promise<{ recordingId: string; audioFilePath: string }> {
     try {
       const formData = new FormData();
       formData.append('audio', recording.audioBlob, `recording-${recording.id}.webm`);
@@ -131,9 +131,34 @@ class AudioStorageService {
       }
 
       const result = await response.json();
-      return result.recordingId;
+      return {
+        recordingId: result.recordingId,
+        audioFilePath: result.audioFilePath
+      };
     } catch (error) {
       console.error('Failed to upload recording:', error);
+      throw error;
+    }
+  }
+
+  async processRecording(recordingId: string, audioFilePath: string): Promise<any> {
+    try {
+      const response = await fetch(`/api/recordings/${recordingId}/process`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ audioFilePath }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Processing failed: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      return result.analysis;
+    } catch (error) {
+      console.error('Failed to process recording:', error);
       throw error;
     }
   }

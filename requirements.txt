@@ -1,0 +1,8 @@
+torch>=1.9.0
+transformers>=4.20.0
+librosa>=0.9.0
+scikit-learn>=1.0.0
+joblib>=1.1.0
+numpy>=1.21.0
+soundfile>=0.10.0
+allosaurus>=0.3.0
