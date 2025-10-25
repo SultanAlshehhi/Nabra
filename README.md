@@ -8,6 +8,8 @@
 
 Nabra is an innovative AI-powered speech therapy platform designed to help patients improve their speech through intelligent analysis, gamified feedback, and professional reporting. The platform serves both patients and speech therapists with tailored interfaces and comprehensive tools.
 
+Dataset: https://www.seeingspeech.ac.uk/speechstar/multimedia-speech-databases/
+
 ## ✨ Key Features
 
 ### 🎤 **Speech Analysis & Recording**
