@@ -89,6 +89,20 @@ Dataset: https://www.seeingspeech.ac.uk/speechstar/multimedia-speech-databases/
 4. **Access Reports** for clinical documentation
 5. **Monitor Progress** across multiple patients
 
+## Licensing
+
+This repository uses separate licenses for code and non-code materials:
+
+- Source code, scripts, configuration, and other software files are licensed
+  under the MIT License.
+- Non-code assets, documentation, notebooks, datasets, model artifacts,
+  generated media, and supporting materials are licensed under the Creative
+  Commons Attribution 4.0 International License (CC BY 4.0).
+- Third-party dependencies, vendored packages, and files with their own license
+  notices remain under their original license terms.
+
+See [LICENSE](LICENSE) for the full licensing details.
+
 ## 🏗️ Project Structure
 
 ```
